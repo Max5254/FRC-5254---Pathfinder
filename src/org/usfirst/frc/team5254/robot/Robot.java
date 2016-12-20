@@ -69,7 +69,7 @@ public class Robot extends IterativeRobot {
 			
 			//Put intake down
 			//TODO: Is this backwards? 
-			Pathfinder.intake.toggleIntake(false, true); 
+			Pathfinder.intake.toggleIntake(true); 
 			
 			//Drive
 			if (driveTimer.get() < lowBarTime) {
@@ -80,7 +80,7 @@ public class Robot extends IterativeRobot {
 				driveTimer.stop();
 			}
 			//Put intake up
-			Pathfinder.intake.toggleIntake(true, false);
+			Pathfinder.intake.toggleIntake(false);
 			break;
 		
 		case 0:
@@ -98,18 +98,20 @@ public class Robot extends IterativeRobot {
 	 * mode
 	 */
 	public void teleopInit() {
+		System.out.println("teleopInit");
 	}
 
 	/**
 	 * This function is called periodically during operator control
 	 */
 	public void teleopPeriodic() {
+		//System.out.println("teleopPeriodic");
 		Pathfinder.driver.driverControls();
 		Pathfinder.operator.operatorControls();
-		System.out.println("tele");
+		//System.out.println("tele");
 	}
 
-	private void delay(double d) {
+	public void delay(double d) {
 		// TODO Auto-generated method stub
 
 	}

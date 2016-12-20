@@ -1,5 +1,7 @@
 package org.usfirst.frc.team5254.robot;
 
+import java.util.concurrent.TimeUnit;
+
 import org.usfirst.frc.team5254.robot.Team5254Libraries.xBox360;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -36,14 +38,19 @@ public class DriverControls extends Pathfinder {
 			drivetrain.shiftLow();
 
 		
-		// Right Trigger does highGoal, Left Trigger does lowGoal
-		if (driver.getRT()) {
-			shooter.highGoal();
-		} else if (driver.getLT()) {
-			shooter.lowGoal();
-		} else {
+		// Right Trigger and Left Trigger shoot
+		if (driver.getRT() || driver.getLT()) {
+			shooter.holderOpen();
+			try {
+				TimeUnit.MILLISECONDS.sleep(5);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			shooter.shooterExtend();
+			
+		} else 
 			shooter.noShot();
-		}
 		
 		
 		//Code to report how many shots we take in a match 
@@ -57,12 +64,17 @@ public class DriverControls extends Pathfinder {
 		lastButton = driver.getRT() || driver.getLT(); 
 		
 		//Publish values to dashboard
-		SmartDashboard.putNumber("lowGoal", numLow);
-		SmartDashboard.putNumber("highGoal", numHigh);
+		SmartDashboard.putNumber("Goals", numLow + numHigh);
 		
 		//tomahawks
 		// A toggles tomahawks up and down
 		tomahawk.toggleTomahawk(driver.getButtonA());
 		
+
+		if (shooter.leftBallIn() && shooter.rightBallIn()){
+			shooter.holderOpen();
+		}	else {
+			shooter.holderClose();
+		}
 	}
 }

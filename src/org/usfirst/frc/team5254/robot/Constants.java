@@ -5,6 +5,7 @@ public class Constants {
 	//PWM's
 	public static final int INTAKE_MOTOR = 5;
 	
+	
 	//Solenoid's
 	public static final int SHOOTER = 0;
 	public static final int INTAKE_PISTON_EXTEND = 3;
@@ -27,7 +28,7 @@ public class Constants {
 	public static final int OPERATOR_JOYSTICK_PORT = 1;
 	
 	//Can
-	public static final int LEFT_SHOOTER = 1;
-	public static final int RIGHT_SHOOTER = 2;
+	public static final int LEFT_SHOOTER = 2;
+	public static final int RIGHT_SHOOTER = 1;
 
 }
