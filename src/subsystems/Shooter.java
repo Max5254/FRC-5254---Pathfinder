@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.interfaces.Potentiometer;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.CANTalon;
+import edu.wpi.first.wpilibj.CANTalon.FeedbackDevice;
 import edu.wpi.first.wpilibj.DigitalInput;
 
 import org.usfirst.frc.team5254.robot.Constants;
@@ -19,11 +20,24 @@ public class Shooter extends Pathfinder {
 	DigitalInput leftBallSensor = new DigitalInput(Constants.LEFT_BALL_SENSOR);
 	DigitalInput rightBallSensor = new DigitalInput(Constants.RIGHT_BALL_SENSOR);
 	
+	//Scale RPM  to native units using 4069 tics per rev / 600 ms per minute
+	static final double RPMScale = -4096/600;
+	
 	public Shooter() {
-		flywheelLeft.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
-		flywheelLeft.setPID(0.11, 0.0, 0.0);
-		flywheelRight.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
-		flywheelRight.setPID(0.10, 0.0, 0.0);
+		flywheelLeft.changeControlMode(CANTalon.TalonControlMode.Speed);
+		flywheelLeft.setFeedbackDevice(FeedbackDevice.CtreMagEncoder_Relative);
+		flywheelLeft.configNominalOutputVoltage(+0.0f, -0.0f);
+		flywheelLeft.configPeakOutputVoltage(0.0f, -12.0f);
+		flywheelLeft.reverseSensor(false);
+		flywheelLeft.setF(0.025);
+		flywheelLeft.setP(0.11);
+		flywheelLeft.setI(0);
+		flywheelLeft.setD(0);
+		
+		flywheelRight.changeControlMode(CANTalon.TalonControlMode.Follower);
+		flywheelRight.set(Constants.LEFT_SHOOTER);
+		flywheelRight.reverseOutput(true);
+		
 			
 	}
 	public boolean leftBallIn() {
@@ -66,42 +80,34 @@ public class Shooter extends Pathfinder {
 	}
 
 	//Nothing: don't fire
-	public void noShot() {
-		holder.set(false);
+	public void shooterRetract() {
 		shooter.set(false);
-		}
+	}
 	public void shooterExtend(){
 		shooter.set(true);
 	}
 	public void holderOpen(){
 		holder.set(false);
 	}
-	
 	public void holderClose(){
 		holder.set(true);
 	}
+	
+	public void setFlywheel(int RPM){
+		flywheelLeft.changeControlMode(CANTalon.TalonControlMode.Speed);
+		flywheelLeft.set(RPM * RPMScale);
+	}
 	public void flywheelOut(){
+		flywheelLeft.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
 		flywheelLeft.set(-1);
-		flywheelRight.set(-1);
 	}
 	public void flywheelIn(){
-		flywheelLeft.set(1);
+		flywheelLeft.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
 		flywheelLeft.set(1);
 	}	
 	public void flywheelStop(){
+		flywheelLeft.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
 		flywheelLeft.set(0);
-		flywheelRight.set(0);
 	}
-	public void d4Shot(){
-		Potentiometer pot;
-		pot = new AnalogPotentiometer(0, 360, 30);
-		AnalogInput ai = new AnalogInput(1);
-		pot = new AnalogPotentiometer(ai, 360, 30);
-	}
-	public void spyBoxShot(){
-		Potentiometer pot;
-		pot = new AnalogPotentiometer(0, 360, 30);
-		AnalogInput ai = new AnalogInput(1);
-		pot = new AnalogPotentiometer(ai, 360, 30);
-	}
+
 }
